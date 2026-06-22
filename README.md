@@ -42,9 +42,12 @@ A post that contributes nothing beyond an emotional reaction, headline restateme
 All data was collected from the Tottenham Hotspur Football Club subreddit r/coys, and strictly from threads related to player transfer rumors. Informed posts are genuinely rare relative to standard or low-effort posts, particularly in transfer-rumor threads which are often dominated by speculation and emotional reactions. I manually selected all informed posts from a range of 9 different threads. Given the scarcity of informed posts, these posts amount to 20% of the example mix. For standard and low-effort posts, I used `claude-sonnet-4.7` to label every comment from the same 9 threads using the label definitions (~1200 posts). From there, I prompted Claude to write a script to select 100 low-effort and standard posts at random. These were personally reviewed and overridden where necessary. Exceptionally short (< 5 words), posts containing links or images, or were deleted were removed from the list. The total example count was 204 posts with the following distribution.
 
 **Label distribution:**
+
+```
 low-effort    84
 standard      80
 informed      40
+```
 
 ### Difficult-to-label examples
 
@@ -68,19 +71,28 @@ Base model: `distilbert-base-uncased`
 Training platform: `Google Colab (free GPU)` on a T4 GPU
 
 **Training set distribution:**
+
+```
 Train: 142 examples
 Validation: 31 examples
 Test: 31 examples
+```
 
 **Train label distribution:**
+
+```
 low-effort    58
 standard      56
 informed      28
+```
 
 **Test label distribution:**
+
+```
 low-effort    13
 standard      12
 informed       6
+```
 
 ### Hyperparameter Config
 
@@ -149,6 +161,7 @@ low-effort
 
 ### Overall accuracy
 
+```
 ==================================================
 RESULTS COMPARISON
 ==================================================
@@ -157,12 +170,15 @@ Model                               Accuracy
 Zero-shot baseline (Groq)              0.677
 Fine-tuned DistilBERT                  0.742
 ---------------------------------------------
+```
 
 ### Per model per-class metrics
 
 **🎯 Baseline accuracy: 0.677  (evaluated on 31/31 parseable responses)**
 
 **Per-class metrics (baseline):**
+
+```
               precision    recall  f1-score   support
 
     informed       0.60      1.00      0.75         6
@@ -172,10 +188,13 @@ Fine-tuned DistilBERT                  0.742
     accuracy                           0.68        31
    macro avg       0.66      0.73      0.67        31
 weighted avg       0.68      0.68      0.66        31
+```
 
 **🎯 Fine-tuned model accuracy: 0.742**
 
 **Per-class metrics (fine-tuned model):**
+
+```
               precision    recall  f1-score   support
 
     informed       1.00      0.67      0.80         6
@@ -185,12 +204,15 @@ weighted avg       0.68      0.68      0.66        31
     accuracy                           0.74        31
    macro avg       0.81      0.73      0.75        31
 weighted avg       0.78      0.74      0.75        31
+```
 
+```
 Epoch	Training Loss	Validation Loss	Accuracy
 1	0.901827	0.796798	0.612903
 2	0.472089	0.620465	0.774194
 3	0.305678	0.483301	0.838710
 4	0.139297	0.491978	0.806452
+```
 
 ### Confusion Matrix
 
@@ -203,59 +225,76 @@ Epoch	Training Loss	Validation Loss	Accuracy
 ### Wrong Prediction Analysis
 
 Wrong predictions: 8 / 31. Four shared and analysed below.
-
+```
 --- #1 ---
 Text:      Doesn't matter when Man Utd aren't willing to pay the 80 mil West Ham want. It worked with Mbeumo because he wasn't open to joining us and only wanted Man Utd. This is obviously different
 True:      informed
 Predicted: standard  (confidence: 0.82)
+```
 
 This post contains contextually rich insights in the form of transfer fees, cross-club references, and names a player, but the model predicted this was standard rather than informed. It also did so with very high confidence. I believe the model was interpreting the the overall sentiment as fan narrative rather than genuinely new transfer saga context. When reading the thread it is clear that this is genuinely new information with a varifiable assertion: Mbuemo only wanted Man Utd. (well reported fact), but with the thread context lacking, the model interpreted the language as speculative. It is possible the model sees emphatic language like "obviously" and "only wanted..." as typical of standard posts, which are based on fan narrative or belief rather than verifiable evidence.
 
+```
 --- #3 ---
 Text:      You have to hit your quota of Brighton players this window. So if not him, your owners will make sure you bid for someone else.
 True:      low-effort
 Predicted: standard  (confidence: 0.68)
+```
 
 Reading this post within the context of the thread, one quickly sees that this is an emotional and sarcastic response to Spurs being linked to another player from Brighton. It is purely an emotional reaction from a rival fan, and the assertion is entirely unsupported which makes low-effort a more appropriate label. However, without that fan and thread context, the model incorrectly predicts it as standard. It is possible that the model learned that standard posts typically contain conditional or logical structures ("you have to hit your quota... so if not him...") that make those posts sound like a coherent perspective.  
 
+```
 --- #4 ---
 Text:      Had 19 G/A for Girona. Quite a lot of end product I'd say
 True:      informed
 Predicted: standard  (confidence: 0.53)
+```
 
 This post provides genuinely new information to the discussion (the stat about the goals and assists the player had for a previous club), which is the definition of informed. Given the lower confidence, it is possible the model was conflicted between the specificity of the stat, and the second part of the sentence which uses more speculative language. Looking at the dataset, informed posts were generally 2-3x as long as standard or low-effort posts, so it's possible the model also learned that informed posts are typically much longer and made a prediction based on post length.
 
+```
 --- #7 ---
 Text:      I suspect it's more likely £40m + add ons
 True:      standard
 Predicted: low-effort  (confidence: 0.57)
+```
 
 This is a coherent perspective based on fan understanding of typical transfer fees for this type of player. It adds some value to the discussion and appears like it could be in response to the headline which contains a transfer fee. These two components edge the example closer to standard than low-effort, but the model predicts (with relatively low confidence) that it is low-effort. I suspect the post length is the primary driver for the model's prediction of low effort given the content contains a speculated transfer fee that is likely in response to the rumored fee, thus required some analytical thought.
 
 ### Sample classifications
 
 **Prediction with analysis:**
-> "Wharton's out of possession is something you need to build around. Ground duels won: Anderson 2.06 p90 (81st) vs Wharton 1.06 p90 (27th). win rate 36.9% (74th) vs 31.2% (20th). Defensive aerials won. Anderson 0.96 p90 (84th) vs Wharton 0.27 p90 (29th). win rate 56.0% (75th) vs 45.4% (11th). Aerial duels won overall. Anderson 1.70 p90 (84th) at 55.2% (86th). Wharton 0.84 p90 (47th) at 46.8% (31st)"
+
+```
+Wharton's out of possession is something you need to build around. Ground duels won: Anderson 2.06 p90 (81st) vs Wharton 1.06 p90 (27th). win rate 36.9% (74th) vs 31.2% (20th). Defensive aerials won. Anderson 0.96 p90 (84th) vs Wharton 0.27 p90 (29th). win rate 56.0% (75th) vs 45.4% (11th). Aerial duels won overall. Anderson 1.70 p90 (84th) at 55.2% (86th). Wharton 0.84 p90 (47th) at 46.8% (31st)
 Label: informed     Confidence: 0.65
+```
 
 This a textbook example of an informed post: it makes a claim and then supports it with new and specific information in the form of comparative statistics between two players of a similar position. The most surprising element of this example is that the model was not more confident. It's possible the language used in the first sentence ("you need to...") is more typical of standard posts.
 
 **Additional samples**
 
-> Madders played at 110% and it really showed in injuries & muscle soreness. If he focused on his best qualities, passing and decisiveness, he could stay healthier. Easier said than done among professional athletes.
+```
+Madders played at 110% and it really showed in injuries & muscle soreness. If he focused on his best qualities, passing and decisiveness, he could stay healthier. Easier said than done among professional athletes.
 Label: standard     Confidence: 0.64
+```
 
-> He picked up nine yellow cards this season, same as Van de Ven and Romero
+```
+He picked up nine yellow cards this season, same as Van de Ven and Romero
 Label: standard     Confidence: 0.54
+```
 
-> Honestly a great signing
+```
+Honestly a great signing
 Label: low-effort   Confidence: 0.92
+```
 
 ---
 
 ## Results Reflection
 
 Overall, the model performed better than the baseline and better than my target F1 score (0.75 actual vs 0.65 target) I identified in my `planning.md` file. Therefore, I believe it could actually be used to create some sort of community tool to surface informed posts for users (I picture a browser extension of some kind) and provide some value. The standard / low-effort boundary was hardest for the model to parse, as seen in the confusion matrix. This seems in part due to labeling issues. Consider the following examples:
+
 ```
 --- #2 ---
 Text:      Where will that leave Robbo, Udogie and maybe even Spence then? Robbo hasn't gone to Spurs to be a backup again.
@@ -271,6 +310,7 @@ Predicted: standard  (confidence: 0.72)
 Example #2 is not a post that could be made without familiarity with the players or general football knowledge. That fact alone pushes this example more towards standard than low-effort, so I'd say the model got it right. Example #5 provides genuinely new information to the discussion, the defining characteristic of informed, even if the post later uses hedging language. These two examples reveal the challenges of correctly labeling large datasets. Labelers make mistakes or change their perspective over labeling sessions and that can impact what the model learns. To correct this, I would take another pass at reviewing the data and see if the model performance improves.
 
 Additionally, as speculated at above, the model seems to have learned that posts containing concessive ("although", "though", "despite") and conditional ("if", "unless") language are good indicators of a coherent perspective typical of standard posts. Consider the following examples for why this is an imperfect approach:
+
 ```
 --- #3 ---
 Text:      You have to hit your quota of Brighton players this window. So if not him, your owners will make sure you bid for someone else.
@@ -300,6 +340,7 @@ My data collection plan was quite underbaked. After initially finding a number o
 
 ## AI Usage 
 
+#### Instance 1
 **What I directed the AI to do:**
 Label all Reddit comments using the Informed / Standard / Low-effort classification scheme, following a detailed specification including label definitions, output format, and instructions to skip bot/deleted comments and flatten nested replies.
 
@@ -309,6 +350,7 @@ Produced a CSV with labels placed in `llm_label` column and all required metadat
 **What I changed or overrode:**
 Randomly sourced ~80 standard and low effort examples from the generated CSV and then reviewed all labeled examples manually, correcting cases where the model misapplied labels (primarily at the boundaries of standard / informed and standard / low-effort). Stored final label decisions in the `final_label` column.
 
+#### Instance 2
 **What I directed the AI to do:**
 Debug a 100% unparseable baseline result in the fine-tuning Colab notebook.
 
