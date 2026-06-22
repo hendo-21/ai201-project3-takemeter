@@ -361,3 +361,7 @@ Identified the unparseable baseline as a case-sensitivity bug in the notebook's 
 Investigated the case-sensitivity fix independently rather than accepting the function rewrite and resolved the error by lowercasing the labels in the source CSV instead.
 
 ---
+
+## Demo Video
+
+(Demonstration and walkthrough.)[Demo.mov]
