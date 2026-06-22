@@ -42,6 +42,7 @@ A post that contributes nothing beyond an emotional reaction, headline restateme
 All data was collected from the Tottenham Hotspur Football Club subreddit r/coys, and strictly from threads related to player transfer rumors. Informed posts are genuinely rare relative to standard or low-effort posts, particularly in transfer-rumor threads which are often dominated by speculation and emotional reactions. I manually selected all informed posts from a range of 9 different threads. Given the scarcity of informed posts, these posts amount to 20% of the example mix. For standard and low-effort posts, I used `claude-sonnet-4.7` to label every comment from the same 9 threads using the label definitions (~1200 posts). From there, I prompted Claude to write a script to select 100 low-effort and standard posts at random. These were personally reviewed and overridden where necessary. Exceptionally short (< 5 words), posts containing links or images, or were deleted were removed from the list. The total example count was 204 posts with the following distribution.
 
 **Label distribution:**
+
 ```
 low-effort    84
 standard      80
