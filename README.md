@@ -340,6 +340,7 @@ My data collection plan was quite underbaked. After initially finding a number o
 
 ## AI Usage 
 
+#### Instance 1
 **What I directed the AI to do:**
 Label all Reddit comments using the Informed / Standard / Low-effort classification scheme, following a detailed specification including label definitions, output format, and instructions to skip bot/deleted comments and flatten nested replies.
 
@@ -349,6 +350,7 @@ Produced a CSV with labels placed in `llm_label` column and all required metadat
 **What I changed or overrode:**
 Randomly sourced ~80 standard and low effort examples from the generated CSV and then reviewed all labeled examples manually, correcting cases where the model misapplied labels (primarily at the boundaries of standard / informed and standard / low-effort). Stored final label decisions in the `final_label` column.
 
+#### Instance 2
 **What I directed the AI to do:**
 Debug a 100% unparseable baseline result in the fine-tuning Colab notebook.
 
