@@ -42,9 +42,11 @@ A post that contributes nothing beyond an emotional reaction, headline restateme
 All data was collected from the Tottenham Hotspur Football Club subreddit r/coys, and strictly from threads related to player transfer rumors. Informed posts are genuinely rare relative to standard or low-effort posts, particularly in transfer-rumor threads which are often dominated by speculation and emotional reactions. I manually selected all informed posts from a range of 9 different threads. Given the scarcity of informed posts, these posts amount to 20% of the example mix. For standard and low-effort posts, I used `claude-sonnet-4.7` to label every comment from the same 9 threads using the label definitions (~1200 posts). From there, I prompted Claude to write a script to select 100 low-effort and standard posts at random. These were personally reviewed and overridden where necessary. Exceptionally short (< 5 words), posts containing links or images, or were deleted were removed from the list. The total example count was 204 posts with the following distribution.
 
 **Label distribution:**
+```
 low-effort    84
 standard      80
 informed      40
+```
 
 ### Difficult-to-label examples
 
@@ -68,19 +70,25 @@ Base model: `distilbert-base-uncased`
 Training platform: `Google Colab (free GPU)` on a T4 GPU
 
 **Training set distribution:**
+```
 Train: 142 examples
 Validation: 31 examples
 Test: 31 examples
+```
 
 **Train label distribution:**
+```
 low-effort    58
 standard      56
 informed      28
+```
 
 **Test label distribution:**
+```
 low-effort    13
 standard      12
 informed       6
+```
 
 ### Hyperparameter Config
 
@@ -148,7 +156,7 @@ low-effort
 ## Evaluation Report
 
 ### Overall accuracy
-
+```
 ==================================================
 RESULTS COMPARISON
 ==================================================
@@ -157,12 +165,14 @@ Model                               Accuracy
 Zero-shot baseline (Groq)              0.677
 Fine-tuned DistilBERT                  0.742
 ---------------------------------------------
+```
 
 ### Per model per-class metrics
 
 **🎯 Baseline accuracy: 0.677  (evaluated on 31/31 parseable responses)**
 
 **Per-class metrics (baseline):**
+```
               precision    recall  f1-score   support
 
     informed       0.60      1.00      0.75         6
@@ -172,10 +182,12 @@ Fine-tuned DistilBERT                  0.742
     accuracy                           0.68        31
    macro avg       0.66      0.73      0.67        31
 weighted avg       0.68      0.68      0.66        31
+```
 
 **🎯 Fine-tuned model accuracy: 0.742**
 
 **Per-class metrics (fine-tuned model):**
+```
               precision    recall  f1-score   support
 
     informed       1.00      0.67      0.80         6
@@ -185,12 +197,14 @@ weighted avg       0.68      0.68      0.66        31
     accuracy                           0.74        31
    macro avg       0.81      0.73      0.75        31
 weighted avg       0.78      0.74      0.75        31
-
+```
+```
 Epoch	Training Loss	Validation Loss	Accuracy
 1	0.901827	0.796798	0.612903
 2	0.472089	0.620465	0.774194
 3	0.305678	0.483301	0.838710
 4	0.139297	0.491978	0.806452
+```
 
 ### Confusion Matrix
 
@@ -203,32 +217,39 @@ Epoch	Training Loss	Validation Loss	Accuracy
 ### Wrong Prediction Analysis
 
 Wrong predictions: 8 / 31. Four shared and analysed below.
-
+```
 --- #1 ---
 Text:      Doesn't matter when Man Utd aren't willing to pay the 80 mil West Ham want. It worked with Mbeumo because he wasn't open to joining us and only wanted Man Utd. This is obviously different
 True:      informed
 Predicted: standard  (confidence: 0.82)
+```
 
 This post contains contextually rich insights in the form of transfer fees, cross-club references, and names a player, but the model predicted this was standard rather than informed. It also did so with very high confidence. I believe the model was interpreting the the overall sentiment as fan narrative rather than genuinely new transfer saga context. When reading the thread it is clear that this is genuinely new information with a varifiable assertion: Mbuemo only wanted Man Utd. (well reported fact), but with the thread context lacking, the model interpreted the language as speculative. It is possible the model sees emphatic language like "obviously" and "only wanted..." as typical of standard posts, which are based on fan narrative or belief rather than verifiable evidence.
 
+```
 --- #3 ---
 Text:      You have to hit your quota of Brighton players this window. So if not him, your owners will make sure you bid for someone else.
 True:      low-effort
 Predicted: standard  (confidence: 0.68)
+```
 
 Reading this post within the context of the thread, one quickly sees that this is an emotional and sarcastic response to Spurs being linked to another player from Brighton. It is purely an emotional reaction from a rival fan, and the assertion is entirely unsupported which makes low-effort a more appropriate label. However, without that fan and thread context, the model incorrectly predicts it as standard. It is possible that the model learned that standard posts typically contain conditional or logical structures ("you have to hit your quota... so if not him...") that make those posts sound like a coherent perspective.  
 
+```
 --- #4 ---
 Text:      Had 19 G/A for Girona. Quite a lot of end product I'd say
 True:      informed
 Predicted: standard  (confidence: 0.53)
+```
 
 This post provides genuinely new information to the discussion (the stat about the goals and assists the player had for a previous club), which is the definition of informed. Given the lower confidence, it is possible the model was conflicted between the specificity of the stat, and the second part of the sentence which uses more speculative language. Looking at the dataset, informed posts were generally 2-3x as long as standard or low-effort posts, so it's possible the model also learned that informed posts are typically much longer and made a prediction based on post length.
 
+```
 --- #7 ---
 Text:      I suspect it's more likely £40m + add ons
 True:      standard
 Predicted: low-effort  (confidence: 0.57)
+```
 
 This is a coherent perspective based on fan understanding of typical transfer fees for this type of player. It adds some value to the discussion and appears like it could be in response to the headline which contains a transfer fee. These two components edge the example closer to standard than low-effort, but the model predicts (with relatively low confidence) that it is low-effort. I suspect the post length is the primary driver for the model's prediction of low effort given the content contains a speculated transfer fee that is likely in response to the rumored fee, thus required some analytical thought.
 
