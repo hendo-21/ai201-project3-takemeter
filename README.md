@@ -255,6 +255,39 @@ Label: low-effort   Confidence: 0.92
 
 ## Results Reflection
 
+Overall, the model performed better than the baseline and better than my target F1 score (0.75 actual vs 0.65 target) I identified in my `planning.md` file. Therefore, I believe it could actually be used to create some sort of community tool to surface informed posts for users (I picture a browser extension of some kind) and provide some value. The standard / low-effort boundary was hardest for the model to parse, as seen in the confusion matrix. This seems in part due to labeling issues. Consider the following examples:
+```
+--- #2 ---
+Text:      Where will that leave Robbo, Udogie and maybe even Spence then? Robbo hasn't gone to Spurs to be a backup again.
+True:      low-effort
+Predicted: standard  (confidence: 0.74)
+
+--- #5 ---
+Text:      I'm hearing we will be announcing Tonali HWG tonight. I don't know how true it is but that's the buzz gaining steam on Social Media right now.
+True:      low-effort
+Predicted: standard  (confidence: 0.72)
+```
+
+Example #2 is not a post that could be made without familiarity with the players or general football knowledge. That fact alone pushes this example more towards standard than low-effort, so I'd say the model got it right. Example #5 provides genuinely new information to the discussion, the defining characteristic of informed, even if the post later uses hedging language. These two examples reveal the challenges of correctly labeling large datasets. Labelers make mistakes or change their perspective over labeling sessions and that can impact what the model learns. To correct this, I would take another pass at reviewing the data and see if the model performance improves.
+
+Additionally, as speculated at above, the model seems to have learned that posts containing concessive ("although", "though", "despite") and conditional ("if", "unless") language are good indicators of a coherent perspective typical of standard posts. Consider the following examples for why this is an imperfect approach:
+```
+--- #3 ---
+Text:      You have to hit your quota of Brighton players this window. So if not him, your owners will make sure you bid for someone else.
+True:      low-effort
+Predicted: standard  (confidence: 0.68)
+
+--- #6 ---
+Text:      This doesn't seem very likely. Though just the possibility should really make our resident young midfielders feel valued.
+True:      low-effort
+Predicted: standard  (confidence: 0.85)
+```
+Example #3 is a banter dressed up in conditional structure with no real football claim underneath it. A knowledgable fan would recognize that immediately. The concessive part of example #6 is vague sentiment with no specific content. I suspect that if there were more low-effort examples in the dataset that had a similar structure the model would have struggled.
+
+As noted above, informed comments were siginficantly longer than standard and low-effort posts (~100 words vs ~30 for standard and ~12 for Low-effort), and given the failure on short informed posts, it is likely the model learned that post length is a good indicator of informed posts. The higher post length for informed posts suggests that during annotation I may have unconsciously required more elaboration from Informed comments than the definition strictly demands. It's possible that if I had let the LLM label informed posts in a thread as well, I would have had a list of examples that was more diverse in length. Tightening annotation consistency on short informed cases would improve label quality.
+
+As noted above, informed comments were significantly longer than standard and low-effort posts (~100 words vs ~30 for Standard and ~12 for Low-effort). Given the model's failures on short informed posts (e.g. "Had 19 G/A for Girona" — predicted Standard) and its tendency to predict standard for longer low-effort posts with conditional or causal sentence structure it's possible the model learned post length as a proxy for class rather than the deeper content distinction the definitions require. The higher word count for informed posts suggests that during annotation I may have unconsciously required more elaboration from informed comments than the definition strictly demands. Tightening annotation consistency on short factual comments would likely improve label quality in future passes.
+
 ## Spec Reflection
 
 **One way the spec helped**
