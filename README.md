@@ -71,6 +71,7 @@ Base model: `distilbert-base-uncased`
 Training platform: `Google Colab (free GPU)` on a T4 GPU
 
 **Training set distribution:**
+
 ```
 Train: 142 examples
 Validation: 31 examples
@@ -78,6 +79,7 @@ Test: 31 examples
 ```
 
 **Train label distribution:**
+
 ```
 low-effort    58
 standard      56
@@ -85,6 +87,7 @@ informed      28
 ```
 
 **Test label distribution:**
+
 ```
 low-effort    13
 standard      12
@@ -157,6 +160,7 @@ low-effort
 ## Evaluation Report
 
 ### Overall accuracy
+
 ```
 ==================================================
 RESULTS COMPARISON
@@ -173,6 +177,7 @@ Fine-tuned DistilBERT                  0.742
 **🎯 Baseline accuracy: 0.677  (evaluated on 31/31 parseable responses)**
 
 **Per-class metrics (baseline):**
+
 ```
               precision    recall  f1-score   support
 
@@ -188,6 +193,7 @@ weighted avg       0.68      0.68      0.66        31
 **🎯 Fine-tuned model accuracy: 0.742**
 
 **Per-class metrics (fine-tuned model):**
+
 ```
               precision    recall  f1-score   support
 
@@ -199,6 +205,7 @@ weighted avg       0.68      0.68      0.66        31
    macro avg       0.81      0.73      0.75        31
 weighted avg       0.78      0.74      0.75        31
 ```
+
 ```
 Epoch	Training Loss	Validation Loss	Accuracy
 1	0.901827	0.796798	0.612903
