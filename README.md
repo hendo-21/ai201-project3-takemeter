@@ -264,27 +264,37 @@ This is a coherent perspective based on fan understanding of typical transfer fe
 ### Sample classifications
 
 **Prediction with analysis:**
-> "Wharton's out of possession is something you need to build around. Ground duels won: Anderson 2.06 p90 (81st) vs Wharton 1.06 p90 (27th). win rate 36.9% (74th) vs 31.2% (20th). Defensive aerials won. Anderson 0.96 p90 (84th) vs Wharton 0.27 p90 (29th). win rate 56.0% (75th) vs 45.4% (11th). Aerial duels won overall. Anderson 1.70 p90 (84th) at 55.2% (86th). Wharton 0.84 p90 (47th) at 46.8% (31st)"
+
+```
+Wharton's out of possession is something you need to build around. Ground duels won: Anderson 2.06 p90 (81st) vs Wharton 1.06 p90 (27th). win rate 36.9% (74th) vs 31.2% (20th). Defensive aerials won. Anderson 0.96 p90 (84th) vs Wharton 0.27 p90 (29th). win rate 56.0% (75th) vs 45.4% (11th). Aerial duels won overall. Anderson 1.70 p90 (84th) at 55.2% (86th). Wharton 0.84 p90 (47th) at 46.8% (31st)
 Label: informed     Confidence: 0.65
+```
 
 This a textbook example of an informed post: it makes a claim and then supports it with new and specific information in the form of comparative statistics between two players of a similar position. The most surprising element of this example is that the model was not more confident. It's possible the language used in the first sentence ("you need to...") is more typical of standard posts.
 
 **Additional samples**
 
-> Madders played at 110% and it really showed in injuries & muscle soreness. If he focused on his best qualities, passing and decisiveness, he could stay healthier. Easier said than done among professional athletes.
+```
+Madders played at 110% and it really showed in injuries & muscle soreness. If he focused on his best qualities, passing and decisiveness, he could stay healthier. Easier said than done among professional athletes.
 Label: standard     Confidence: 0.64
+```
 
-> He picked up nine yellow cards this season, same as Van de Ven and Romero
+```
+He picked up nine yellow cards this season, same as Van de Ven and Romero
 Label: standard     Confidence: 0.54
+```
 
-> Honestly a great signing
+```
+Honestly a great signing
 Label: low-effort   Confidence: 0.92
+```
 
 ---
 
 ## Results Reflection
 
 Overall, the model performed better than the baseline and better than my target F1 score (0.75 actual vs 0.65 target) I identified in my `planning.md` file. Therefore, I believe it could actually be used to create some sort of community tool to surface informed posts for users (I picture a browser extension of some kind) and provide some value. The standard / low-effort boundary was hardest for the model to parse, as seen in the confusion matrix. This seems in part due to labeling issues. Consider the following examples:
+
 ```
 --- #2 ---
 Text:      Where will that leave Robbo, Udogie and maybe even Spence then? Robbo hasn't gone to Spurs to be a backup again.
@@ -300,6 +310,7 @@ Predicted: standard  (confidence: 0.72)
 Example #2 is not a post that could be made without familiarity with the players or general football knowledge. That fact alone pushes this example more towards standard than low-effort, so I'd say the model got it right. Example #5 provides genuinely new information to the discussion, the defining characteristic of informed, even if the post later uses hedging language. These two examples reveal the challenges of correctly labeling large datasets. Labelers make mistakes or change their perspective over labeling sessions and that can impact what the model learns. To correct this, I would take another pass at reviewing the data and see if the model performance improves.
 
 Additionally, as speculated at above, the model seems to have learned that posts containing concessive ("although", "though", "despite") and conditional ("if", "unless") language are good indicators of a coherent perspective typical of standard posts. Consider the following examples for why this is an imperfect approach:
+
 ```
 --- #3 ---
 Text:      You have to hit your quota of Brighton players this window. So if not him, your owners will make sure you bid for someone else.
